@@ -1,6 +1,6 @@
 namespace ProjectNothing
 {
-    public class NgCollider2D : NgComponent
+    public class NgCollider2D
     {
         static int ms_ID = 0;
 

@@ -2,41 +2,26 @@
 
 namespace ProjectNothing
 {
-    public class NgSelection : NgGameObject2D
+    public class NgSelection
     {
-        readonly SpriteRenderer m_SpriteRenderer = null;
-
         readonly NgCollider2D m_Collider = null;
         Vector2 m_BeginPosition;
         Vector2 m_EndPosition;
 
         public NgCollider2D Collider => m_Collider;
-        public bool Enabled => m_SpriteRenderer != null && m_SpriteRenderer.enabled;
+        public Matrix4x4 ObjectToWorld => Matrix4x4.TRS (m_Collider.Bound.Center, Quaternion.identity, m_Collider.Bound.Size);
 
-        public NgSelection (GameObject gameObject) : base (gameObject)
+        bool m_IsActive = false;
+
+        public bool IsActive => m_IsActive;
+
+        public NgSelection ()
         {
-            m_SpriteRenderer = gameObject.GetComponent<SpriteRenderer> ();
-            m_SpriteRenderer.color = Color.green;
-
-            m_Collider = AddComponent<NgCollider2D> ();
-            m_Collider.LayerMask = (int)NgLayerMask.Selection;
-            m_Collider.IsDynamic = false;
-        }
-
-        public void Enable ()
-        {
-            if (!m_SpriteRenderer.enabled)
+            m_Collider = new NgCollider2D
             {
-                m_SpriteRenderer.enabled = true;
-            }
-        }
-
-        public void Disable ()
-        {
-            if (m_SpriteRenderer.enabled)
-            {
-                m_SpriteRenderer.enabled = false;
-            }
+                LayerMask = (int)NgLayerMask.Selection,
+                IsDynamic = false
+            };
         }
 
         public void OnBeginDrag (Vector2 position)
@@ -44,7 +29,7 @@ namespace ProjectNothing
             m_BeginPosition = position;
             m_EndPosition = position;
 
-            Enable ();
+            m_IsActive = true;
 
             Update ();
         }
@@ -58,29 +43,18 @@ namespace ProjectNothing
 
         public void OnEndDrag ()
         {
-            Disable ();
+            m_IsActive = false;
         }
 
         public void Update ()
         {
-            if (!m_SpriteRenderer.enabled)
+            if (!m_IsActive)
             {
                 return;
             }
 
             Vector2 position = (m_BeginPosition + m_EndPosition) * 0.5f;
             Vector2 size = m_EndPosition - m_BeginPosition;
-
-            m_Transform.position = position;
-
-            if (m_SpriteRenderer.drawMode == SpriteDrawMode.Simple)
-            {
-                m_Transform.localScale = size;
-            }
-            else
-            {
-                m_SpriteRenderer.size = size;
-            }
 
             m_Collider.Bound = new NgBound2D (position, new Vector2 (Mathf.Abs (size.x), Mathf.Abs (size.y)));
         }

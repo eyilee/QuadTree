@@ -81,6 +81,11 @@ namespace ProjectNothing
             return true;
         }
 
+        public void Insert (NgCollider2D collider)
+        {
+            m_Colliders.Add (collider);
+        }
+
         void SubDivide ()
         {
             Vector2 extents = m_Bound.Extents * 0.5f;

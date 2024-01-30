@@ -10,11 +10,13 @@ namespace ProjectNothing
         float m_Velocity = 0f;
         Vector2 m_Forward = Vector2.zero;
 
+        public NgCollider2D Collider => m_Collider;
+        public Matrix4x4 ObjectToWorld => Matrix4x4.TRS (m_Collider.Bound.Center, Quaternion.identity, m_Collider.Bound.Size);
+
         bool m_InCollision = false;
         bool m_IsSelected = false;
 
-        public NgCollider2D Collider => m_Collider;
-        public Matrix4x4 ObjectToWorld => Matrix4x4.TRS (m_Collider.Bound.Center, Quaternion.identity, m_Collider.Bound.Size);
+        public bool IsSelected => m_IsSelected;
 
         public float Velocity
         {

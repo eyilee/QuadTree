@@ -53,7 +53,7 @@ namespace ProjectNothing
 
         public bool TryInsert (NgCollider2D collider)
         {
-            if (!m_Bound.Contains (collider.SweepBound))
+            if (!m_Bound.Contains (collider.Bound))
             {
                 return false;
             }
@@ -100,7 +100,7 @@ namespace ProjectNothing
 
         public void Query (NgCollider2D target, List<NgCollider2D> colliders)
         {
-            if (target.SweepBound.Intersects (m_Bound))
+            if (target.Bound.Intersects (m_Bound))
             {
                 foreach (NgCollider2D collider in m_Colliders)
                 {
@@ -109,7 +109,7 @@ namespace ProjectNothing
                         continue;
                     }
 
-                    if (!target.Equals (collider) && target.SweepBound.Intersects (collider.SweepBound))
+                    if (!target.Equals (collider) && target.Bound.Intersects (collider.Bound))
                     {
                         colliders.Add (collider);
                     }

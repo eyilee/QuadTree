@@ -29,7 +29,7 @@ namespace ProjectNothing
 
         NgQuadTree2D m_Root = null;
         NgSelection m_Selection = null;
-        readonly List<NgMovingRectangle> m_MovingRectangles = new ();
+        readonly List<NgRectangle> m_Rectangles = new ();
 
         SelectionSystem m_SelectionSystem;
 
@@ -63,15 +63,14 @@ namespace ProjectNothing
                 m_Root.Insert (m_Selection.Collider);
             }
 
-            foreach (NgMovingRectangle rectangle in m_MovingRectangles)
+            foreach (NgRectangle rectangle in m_Rectangles)
             {
-                //rectangle.Predict (deltaTime);
                 rectangle.Update (deltaTime);
                 m_Root.TryInsert (rectangle.Collider);
             }
 
             List<NgCollider2D> colliders = new ();
-            foreach (NgMovingRectangle rectangle in m_MovingRectangles)
+            foreach (NgRectangle rectangle in m_Rectangles)
             {
                 colliders.Clear ();
 
@@ -109,15 +108,15 @@ namespace ProjectNothing
             List<Matrix4x4> rectangles = new ();
             List<Matrix4x4> selects = new ();
 
-            foreach (NgMovingRectangle movingRectangle in m_MovingRectangles)
+            foreach (NgRectangle rectangle in m_Rectangles)
             {
-                if (!movingRectangle.IsSelected)
+                if (!rectangle.IsSelected)
                 {
-                    rectangles.Add (movingRectangle.ObjectToWorld);
+                    rectangles.Add (rectangle.ObjectToWorld);
                 }
                 else
                 {
-                    selects.Add (movingRectangle.ObjectToWorld);
+                    selects.Add (rectangle.ObjectToWorld);
                 }
             }
 
@@ -155,17 +154,17 @@ namespace ProjectNothing
             int times = 100;
             while (times-- > 0)
             {
-                NgMovingRectangle rectangle = new ();
-                rectangle.SetPosition (position);
-                rectangle.SetSize (new Vector2 (m_RectangleWidth, m_RectangleHeight));
-                rectangle.SetDynamic (true);
-                rectangle.Velocity = Random.Range (1f, 2f);
+                float width = Random.Range (1f, 3f) * m_RectangleWidth;
+                float height = Random.Range (1f, 3f) * m_RectangleHeight;
+                NgRectangle rectangle = new (position, new Vector2 (width, height), 0f);
 
-                Vector2 forward = Random.insideUnitCircle;
-                forward.Normalize ();
-                rectangle.Forward = forward;
+                Vector2 velocity = Random.insideUnitCircle;
+                velocity.Normalize ();
+                rectangle.Velocity = velocity * Random.Range (1f, 3f);
 
-                m_MovingRectangles.Add (rectangle);
+                rectangle.AngularVelocity = 180f * (Random.Range (0f, 1f) > 0.5f ? 1f : -1f);
+
+                m_Rectangles.Add (rectangle);
             }
         }
 

@@ -20,7 +20,6 @@ namespace ProjectNothing
             m_Collider = new NgCollider2D
             {
                 LayerMask = (int)NgLayerMask.Selection,
-                IsDynamic = false
             };
         }
 

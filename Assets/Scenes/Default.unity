@@ -260,14 +260,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c669c1e4c6c8b56428679ca94bcfa32b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SelectionPrefab: {fileID: 3676541428327051152, guid: 819cdd60ed8cb4e4ab818d8f246f1646, type: 3}
-  m_SquarePrefab: {fileID: 6737705399374728543, guid: 1fbf68f63506bf443946e04071292c0e, type: 3}
-  m_RectanglePrefab: {fileID: 2157075025232928919, guid: c9747644bdfac0f40af41e8418c8ef9f, type: 3}
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   m_OutlineMaterial: {fileID: 2100000, guid: 2027d8b6c7e851e4fa18022491732f68, type: 2}
   m_SquareMaterial: {fileID: 2100000, guid: ed42a5a431e9c7543beccd7a77fd8687, type: 2}
-  m_OutlineTexture: {fileID: 2800000, guid: dcf69a68e4b61464cb4d42f5725ef5ce, type: 3}
-  m_SquareTexture: {fileID: 2800000, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_BoardWidth: 10
   m_BoardHeight: 10
   m_RectangleWidth: 0.1

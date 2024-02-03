@@ -2,14 +2,14 @@
 
 namespace ProjectNothing
 {
-    public class NgSelection
+    public class NgSelection : NgGameObject
     {
         readonly NgCollider2D m_Collider = null;
         Vector2 m_BeginPosition;
         Vector2 m_EndPosition;
 
         public NgCollider2D Collider => m_Collider;
-        public Matrix4x4 ObjectToWorld => Matrix4x4.TRS (m_Collider.Bound.Center, Quaternion.identity, m_Collider.Bound.Size);
+        public Matrix4x4 ObjectToWorld => Matrix4x4.TRS (Transform.Position, Quaternion.AngleAxis (Transform.Rotation, Vector3.forward), Transform.Scale);
 
         bool m_IsActive = false;
 
@@ -17,10 +17,8 @@ namespace ProjectNothing
 
         public NgSelection ()
         {
-            m_Collider = new NgCollider2D
-            {
-                LayerMask = (int)NgLayerMask.Selection,
-            };
+            m_Collider = AddComponent<NgCollider2D> ();
+            m_Collider.LayerMask = (int)NgLayerMask.Selection;
         }
 
         public void OnBeginDrag (Vector2 position)
@@ -52,10 +50,12 @@ namespace ProjectNothing
                 return;
             }
 
-            Vector2 position = (m_BeginPosition + m_EndPosition) * 0.5f;
-            Vector2 size = m_EndPosition - m_BeginPosition;
+            Transform.Position = (m_BeginPosition + m_EndPosition) * 0.5f;
 
-            m_Collider.Bound = new NgBound2D (position, new Vector2 (Mathf.Abs (size.x), Mathf.Abs (size.y)));
+            Vector2 diff = m_EndPosition - m_BeginPosition;
+            Transform.Scale = new Vector2 (Mathf.Abs (diff.x), Mathf.Abs (diff.y));
+
+            m_Collider.BoundingBox = new NgBoundingBox2D (Transform.Position, Transform.Scale);
         }
     }
 }

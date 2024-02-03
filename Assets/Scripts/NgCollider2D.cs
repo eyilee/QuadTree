@@ -1,14 +1,9 @@
 namespace ProjectNothing
 {
-    public class NgCollider2D
+    public class NgCollider2D : NgComponent
     {
-        static int ms_ID = 0;
-
-        readonly int m_ID;
         int m_LayerMask;
-        NgBound2D m_Bound;
-
-        public int ID => m_ID;
+        NgBoundingBox2D m_BoundingBox;
 
         public int LayerMask
         {
@@ -16,16 +11,14 @@ namespace ProjectNothing
             set => m_LayerMask = value;
         }
 
-        public NgBound2D Bound
+        public NgBoundingBox2D BoundingBox
         {
-            get => m_Bound;
-            set => m_Bound = value;
+            get => m_BoundingBox;
+            set => m_BoundingBox = value;
         }
 
-        public NgCollider2D ()
+        public NgCollider2D (NgGameObject gameObject) : base (gameObject)
         {
-            m_ID = ms_ID++;
-            m_LayerMask = 0;
         }
     }
 }

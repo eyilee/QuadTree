@@ -23,7 +23,7 @@ namespace ProjectNothing
         float m_RectangleHeight;
 
         static readonly int ms_ColorID = Shader.PropertyToID ("_Color");
-        static readonly int ms_BoundID = Shader.PropertyToID ("_Bound");
+        static readonly int ms_BoxID = Shader.PropertyToID ("_Box");
         static MaterialPropertyBlock ms_OutlineMaterialPropertyBlock = null;
         static MaterialPropertyBlock ms_SquareMaterialPropertyBlock = null;
 
@@ -40,7 +40,7 @@ namespace ProjectNothing
 
             ms_SquareMaterialPropertyBlock = new MaterialPropertyBlock ();
 
-            m_Root = new (5, 4, new NgBound2D (Vector2.zero, new Vector2 (m_BoardWidth, m_BoardHeight)));
+            m_Root = new (5, 4, new NgBoundingBox2D (Vector2.zero, new Vector2 (m_BoardWidth, m_BoardHeight)));
 
             m_Selection = new NgSelection ();
 
@@ -90,8 +90,7 @@ namespace ProjectNothing
                 return;
             }
 
-            NgBound2D bound = m_Selection.Collider.Bound;
-            ms_OutlineMaterialPropertyBlock.SetVector (ms_BoundID, new Vector4 (bound.Center.x, bound.Center.y, bound.Size.x, bound.Size.y));
+            ms_OutlineMaterialPropertyBlock.SetVector (ms_BoxID, new Vector4 (m_Selection.Transform.Position.x, m_Selection.Transform.Position.y, m_Selection.Transform.Scale.x, m_Selection.Transform.Scale.y));
 
             RenderParams rp = new ()
             {
@@ -156,7 +155,7 @@ namespace ProjectNothing
             {
                 float width = Random.Range (1f, 3f) * m_RectangleWidth;
                 float height = Random.Range (1f, 3f) * m_RectangleHeight;
-                NgRectangle rectangle = new (position, new Vector2 (width, height), 0f);
+                NgRectangle rectangle = new (position, 0f, new Vector2 (width, height));
 
                 Vector2 velocity = Random.insideUnitCircle;
                 velocity.Normalize ();

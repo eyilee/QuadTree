@@ -1,10 +1,10 @@
-Shader "Ng/NgOutline"
+Shader "Ng/NgBoxOutline"
 {
     Properties
     {
         _Color ("Color", Color) = (1, 1, 1, 1)
-        _Bound ("Bound", Vector) = (0, 0, 1, 1)
-        _Size ("Size", Float) = 0.01
+        _Box ("Box", Vector) = (0, 0, 1, 1)
+        _Size ("Size", Float) = 0.02
     }
     SubShader
     {
@@ -33,7 +33,7 @@ Shader "Ng/NgOutline"
             };
 
             float4 _Color;
-            float4 _Bound;
+            float4 _Box;
             float _Size;
 
             v2f vert (appdata v)
@@ -49,12 +49,9 @@ Shader "Ng/NgOutline"
 
             fixed4 frag (v2f i) : SV_Target
             {
-                float dx = min(distance(i.worldPos.x, _Bound.x - (_Bound.z * 0.5)),
-                    distance(i.worldPos.x, _Bound.x + (_Bound.z * 0.5)));
-                float dy = min(distance(i.worldPos.y, _Bound.y + (_Bound.w * 0.5)),
-                    distance(i.worldPos.y, _Bound.y - (_Bound.w * 0.5)));
-                float d = min(dx, dy);
-                return lerp(_Color, fixed4(0, 0, 0, 0), step(_Size, d));
+                float dx = min(distance(i.worldPos.x, _Box.x - (_Box.z * 0.5)), distance(i.worldPos.x, _Box.x + (_Box.z * 0.5)));
+                float dy = min(distance(i.worldPos.y, _Box.y + (_Box.w * 0.5)), distance(i.worldPos.y, _Box.y - (_Box.w * 0.5)));
+                return lerp(_Color, fixed4(0, 0, 0, 0), step(_Size, min(dx, dy)));
             }
             ENDCG
         }

@@ -35,11 +35,8 @@ namespace ProjectNothing
             Transform.Scale = scale;
 
             m_Collider = AddComponent<NgCollider2D> ();
-            m_Collider.LayerMask = (int)(NgLayerMask.Collision | NgLayerMask.Selection);
-
-            Vector2 rotated = (scale * 0.5f).Rotate (roration);
-            Vector2 size = 2f * Mathf.Max (Mathf.Abs (rotated.x), Mathf.Abs (rotated.y)) * Vector2.one;
-            m_Collider.BoundingBox = new NgBoundingBox2D (position, size);
+            m_Collider.LayerMask = NgLayerMask.Collision | NgLayerMask.Selection;
+            m_Collider.SetRectangle (position, scale, roration);
         }
 
         public void OnCollision (List<NgCollider2D> colliders)
@@ -48,7 +45,7 @@ namespace ProjectNothing
 
             foreach (NgCollider2D collider in colliders)
             {
-                if (collider.LayerMask == (int)NgLayerMask.Selection)
+                if (collider.LayerMask == NgLayerMask.Selection)
                 {
                     m_IsSelected = true;
                 }
@@ -62,9 +59,7 @@ namespace ProjectNothing
                 Transform.Position += m_Velocity * deltaTime;
                 Transform.Rotation += m_AngularVelocity * deltaTime;
 
-                Vector2 rotated = (Transform.Scale * 0.5f).Rotate (Transform.Rotation);
-                Vector2 size = 2f * Mathf.Max (Mathf.Abs (rotated.x), Mathf.Abs (rotated.y)) * Vector2.one;
-                m_Collider.BoundingBox = new NgBoundingBox2D (Transform.Position, size);
+                m_Collider.SetRectangle (Transform.Position, Transform.Scale, Transform.Rotation);
 
                 if (Transform.Position.x > 5f && m_Velocity.x > 0)
                 {

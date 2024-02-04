@@ -18,7 +18,7 @@ namespace ProjectNothing
         public NgSelection ()
         {
             m_Collider = AddComponent<NgCollider2D> ();
-            m_Collider.LayerMask = (int)NgLayerMask.Selection;
+            m_Collider.LayerMask = NgLayerMask.Selection;
         }
 
         public void OnBeginDrag (Vector2 position)
@@ -55,7 +55,7 @@ namespace ProjectNothing
             Vector2 diff = m_EndPosition - m_BeginPosition;
             Transform.Scale = new Vector2 (Mathf.Abs (diff.x), Mathf.Abs (diff.y));
 
-            m_Collider.BoundingBox = new NgBoundingBox2D (Transform.Position, Transform.Scale);
+            m_Collider.SetRectangle (Transform.Position, Transform.Scale, Transform.Rotation);
         }
     }
 }

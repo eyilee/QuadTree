@@ -3,7 +3,7 @@
 namespace ProjectNothing
 {
     [Flags]
-    enum NgLayerMask
+    public enum NgLayerMask
     {
         None = 0,
         Collision = 1,

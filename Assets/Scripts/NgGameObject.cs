@@ -6,7 +6,6 @@ namespace ProjectNothing
     public class NgGameObject
     {
         readonly Dictionary<Type, NgComponent> m_Components = new ();
-
         readonly NgGameObject m_GameObject;
         readonly NgTransform m_Transform;
 

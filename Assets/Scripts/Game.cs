@@ -188,6 +188,13 @@ namespace ProjectNothing
 
                 Gizmos.DrawWireCube (quadTree.Bound.Center, quadTree.Bound.Size);
             }
+
+            Gizmos.color = Color.green;
+
+            foreach (NgRectangle rectangle in m_Rectangles)
+            {
+                Gizmos.DrawWireCube (rectangle.Collider.BoundingBox.Center, rectangle.Collider.BoundingBox.Size);
+            }
         }
     }
 }

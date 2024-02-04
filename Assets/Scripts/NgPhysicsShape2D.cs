@@ -43,16 +43,34 @@ namespace ProjectNothing
             m_Vertices = new List<Vector2> ();
         }
 
+        public void SetPolygon (List<Vector2> vertices)
+        {
+            m_ShapeType = NgPhysicsShapeType2D.Polygon;
+
+            m_Vertices.Clear ();
+            m_Vertices.AddRange (vertices);
+
+            m_Radius = 0f;
+        }
+
         public void SetRectangle (Vector2 center, Vector2 size, float angle, float radius = 0f)
         {
             m_ShapeType = NgPhysicsShapeType2D.Polygon;
 
-            Vector2 rotated = (size * 0.5f).Rotate (angle);
+            float sin = Mathf.Sin (angle * Mathf.Deg2Rad);
+            float cos = Mathf.Cos (angle * Mathf.Deg2Rad);
+            float sinX = sin * size.x;
+            float cosX = cos * size.x;
+            float sinY = sin * size.y;
+            float cosY = cos * size.y;
+            Vector2 v1 = new Vector2 (cosX - sinY, sinX + cosY) * 0.5f;
+            Vector2 v2 = new Vector2 (cosX + sinY, sinX - cosY) * 0.5f;
+
             m_Vertices.Clear ();
-            m_Vertices.Add (new Vector2 (center.x + rotated.x, center.y + rotated.y));
-            m_Vertices.Add (new Vector2 (center.x - rotated.y, center.y + rotated.x));
-            m_Vertices.Add (new Vector2 (center.x - rotated.x, center.y - rotated.y));
-            m_Vertices.Add (new Vector2 (center.x + rotated.y, center.y - rotated.x));
+            m_Vertices.Add (center + v1);
+            m_Vertices.Add (center - v2);
+            m_Vertices.Add (center - v1);
+            m_Vertices.Add (center + v2);
 
             m_Radius = radius;
         }

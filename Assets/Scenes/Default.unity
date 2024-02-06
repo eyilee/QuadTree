@@ -262,7 +262,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   m_OutlineMaterial: {fileID: 2100000, guid: 2027d8b6c7e851e4fa18022491732f68, type: 2}
-  m_SquareMaterial: {fileID: 2100000, guid: ed42a5a431e9c7543beccd7a77fd8687, type: 2}
+  m_SquareMaterial: {fileID: 2100000, guid: 495974f0ef7548649a2c4dd06c46ea5d, type: 2}
   m_BoardWidth: 10
   m_BoardHeight: 10
   m_RectangleWidth: 0.1

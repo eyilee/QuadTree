@@ -1,15 +1,13 @@
-Shader "Ng/NgCircle"
+Shader "Ng/NgCircle2D"
 {
     Properties
     {
-        _Color ("Color", Color) = (1,1,1,1)
-        _Center ("Center", Vector) = (0,0,0,0)
-        _Radius ("Radius", float) = 1
+        _Color ("Color", Color) = (1, 1, 1, 1)
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
-        LOD 100
+        Tags { "RenderType"="Transparent" }
+        Blend SrcAlpha OneMinusSrcAlpha 
 
         Pass
         {
@@ -30,26 +28,24 @@ Shader "Ng/NgCircle"
             struct v2f
             {
                 float4 vertex : SV_POSITION;
-                float3 worldPos : TEXCOORD0;
+                float2 uv : TEXCOORD0;
             };
 
             float4 _Color;
-            float4 _Center;
-            float _Radius;
 
             v2f vert (appdata v)
             {
                 v2f o;
 
-                UNITY_SETUP_INSTANCE_ID(v);
-                o.vertex = UnityObjectToClipPos(v.vertex);
-                o.worldPos = mul(unity_ObjectToWorld, v.vertex);
+                UNITY_SETUP_INSTANCE_ID (v);
+                o.vertex = UnityObjectToClipPos (v.vertex);
+                o.uv = v.uv;
                 return o;
             }
 
-            fixed4 frag (v2f i) : SV_Target
+            float4 frag (v2f i) : SV_Target
             {
-                return lerp(_Color, fixed4(0, 0, 0, 0), step(_Radius, distance(_Center.xy, i.worldPos.xy)));
+                return lerp (_Color, float4 (0, 0, 0, 0), step (0.5, distance (float2 (0.5, 0.5), i.uv.xy)));
             }
             ENDCG
         }

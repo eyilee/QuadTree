@@ -20,51 +20,110 @@ namespace ProjectNothing
             set => m_Delay = value;
         }
 
-        float m_PressTime = 0f;
-        bool m_IsDragging = false;
+        float m_LeftPressTime = 0f;
+        bool m_IsLeftDragging = false;
 
-        public event OnClickCallback OnClick;
-        public event OnBeginDragCallback OnBeginDrag;
-        public event OnDragCallback OnDrag;
-        public event OnEndDragCallback OnEndDrag;
+        public event OnClickCallback OnLeftClick;
+        public event OnBeginDragCallback OnLeftBeginDrag;
+        public event OnDragCallback OnLeftDrag;
+        public event OnEndDragCallback OnLeftEndDrag;
+
+        float m_RightPressTime = 0f;
+        bool m_IsRightDragging = false;
+
+        public event OnClickCallback OnRightClick;
+        public event OnBeginDragCallback OnRightBeginDrag;
+        public event OnDragCallback OnRightDrag;
+        public event OnEndDragCallback OnRightEndDrag;
 
         public void Update ()
         {
+            HandleMouseDown ();
+            HandleMouseUp ();
+            HandleMousePressed ();
+        }
+
+        public void HandleMouseDown ()
+        {
             if (Input.GetMouseButtonDown (0))
             {
-                m_PressTime = Time.time;
+                m_LeftPressTime = Time.time;
             }
 
+            if (Input.GetMouseButtonDown (1))
+            {
+                m_RightPressTime = Time.time;
+            }
+        }
+
+        public void HandleMouseUp ()
+        {
             if (Input.GetMouseButtonUp (0))
             {
                 Vector2 mousePosition = m_Camera.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, m_Camera.nearClipPlane));
 
-                if (Time.time - m_PressTime <= m_Delay)
+                if (Time.time - m_LeftPressTime <= m_Delay)
                 {
-                    OnClick?.Invoke (mousePosition);
+                    OnLeftClick?.Invoke (mousePosition);
                 }
 
-                if (m_IsDragging)
+                if (m_IsLeftDragging)
                 {
-                    m_IsDragging = false;
+                    m_IsLeftDragging = false;
 
-                    OnEndDrag?.Invoke (mousePosition);
+                    OnLeftEndDrag?.Invoke (mousePosition);
                 }
             }
 
+            if (Input.GetMouseButtonUp (1))
+            {
+                Vector2 mousePosition = m_Camera.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, m_Camera.nearClipPlane));
+
+                if (Time.time - m_RightPressTime <= m_Delay)
+                {
+                    OnRightClick?.Invoke (mousePosition);
+                }
+
+                if (m_IsRightDragging)
+                {
+                    m_IsRightDragging = false;
+
+                    OnRightEndDrag?.Invoke (mousePosition);
+                }
+            }
+        }
+
+        public void HandleMousePressed ()
+        {
             if (Input.GetMouseButton (0))
             {
                 Vector2 mousePosition = m_Camera.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, m_Camera.nearClipPlane));
 
-                if (!m_IsDragging)
+                if (!m_IsLeftDragging)
                 {
-                    m_IsDragging = true;
+                    m_IsLeftDragging = true;
 
-                    OnBeginDrag?.Invoke (mousePosition);
+                    OnLeftBeginDrag?.Invoke (mousePosition);
                 }
                 else
                 {
-                    OnDrag?.Invoke (mousePosition);
+                    OnLeftDrag?.Invoke (mousePosition);
+                }
+            }
+
+            if (Input.GetMouseButton (1))
+            {
+                Vector2 mousePosition = m_Camera.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, m_Camera.nearClipPlane));
+
+                if (!m_IsRightDragging)
+                {
+                    m_IsRightDragging = true;
+
+                    OnRightBeginDrag?.Invoke (mousePosition);
+                }
+                else
+                {
+                    OnRightDrag?.Invoke (mousePosition);
                 }
             }
         }

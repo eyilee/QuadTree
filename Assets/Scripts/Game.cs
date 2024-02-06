@@ -45,10 +45,10 @@ namespace ProjectNothing
             m_Selection = new NgSelection ();
 
             m_SelectionSystem = gameObject.GetComponent<SelectionSystem> ();
-            m_SelectionSystem.OnClick += (Vector2 mousePosition) => AddRectangle (mousePosition);
-            m_SelectionSystem.OnBeginDrag += (Vector2 mousePosition) => m_Selection.OnBeginDrag (mousePosition);
-            m_SelectionSystem.OnDrag += (Vector2 mousePosition) => m_Selection.OnDrag (mousePosition);
-            m_SelectionSystem.OnEndDrag += (Vector2 mousePosition) => m_Selection.OnEndDrag ();
+            m_SelectionSystem.OnLeftClick += (Vector2 mousePosition) => AddRectangle (mousePosition);
+            m_SelectionSystem.OnLeftBeginDrag += (Vector2 mousePosition) => m_Selection.OnBeginDrag (mousePosition);
+            m_SelectionSystem.OnLeftDrag += (Vector2 mousePosition) => m_Selection.OnDrag (mousePosition);
+            m_SelectionSystem.OnLeftEndDrag += (Vector2 mousePosition) => m_Selection.OnEndDrag ();
         }
 
         void Update ()
@@ -119,6 +119,8 @@ namespace ProjectNothing
                 }
             }
 
+            Mesh mesh = RectangleMesh.CreateMesh (Vector2.one);
+
             if (rectangles.Count > 0)
             {
                 ms_SquareMaterialPropertyBlock.SetColor (ms_ColorID, Color.white);
@@ -130,7 +132,7 @@ namespace ProjectNothing
                     matProps = ms_SquareMaterialPropertyBlock
                 };
 
-                Graphics.RenderMeshInstanced (rp, m_Mesh, 0, rectangles);
+                Graphics.RenderMeshInstanced (rp, mesh, 0, rectangles);
             }
 
             if (selects.Count > 0)
@@ -144,7 +146,7 @@ namespace ProjectNothing
                     matProps = ms_SquareMaterialPropertyBlock
                 };
 
-                Graphics.RenderMeshInstanced (rp, m_Mesh, 0, selects);
+                Graphics.RenderMeshInstanced (rp, mesh, 0, selects);
             }
         }
 

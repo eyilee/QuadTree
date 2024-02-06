@@ -13,10 +13,10 @@ namespace ProjectNothing
 
             Vector3[] verticies = new Vector3[]
             {
-                new Vector3 (x, y, 0),
-                new Vector3 (-x, y, 0),
-                new Vector3 (-x, -y, 0),
-                new Vector3 (x, -y, 0)
+                new (x, y, 0),
+                new (-x, y, 0),
+                new (-x, -y, 0),
+                new (x, -y, 0)
             };
 
             mesh.SetVertices (verticies);
@@ -31,10 +31,10 @@ namespace ProjectNothing
 
             Vector2[] uvs = new Vector2[]
             {
-                new Vector2 (1, 1),
-                new Vector2 (0, 1),
-                new Vector2 (0, 0),
-                new Vector2 (1, 0)
+                new (1, 1),
+                new (0, 1),
+                new (0, 0),
+                new (1, 0)
             };
 
             mesh.SetUVs (0, uvs);

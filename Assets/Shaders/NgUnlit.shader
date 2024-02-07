@@ -3,12 +3,11 @@ Shader "Ng/NgUnlit"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
-        _Color ("Color", Color) = (1,1,1,1)
+        _Color ("Color", Color) = (1, 1, 1, 1)
     }
     SubShader
     {
         Tags { "RenderType"="Opaque" }
-        LOD 100
 
         Pass
         {
@@ -45,10 +44,10 @@ Shader "Ng/NgUnlit"
             {
                 v2f o;
 
-                UNITY_SETUP_INSTANCE_ID(v);
+                UNITY_SETUP_INSTANCE_ID (v);
                 //UNITY_TRANSFER_INSTANCE_ID(v, o);
-                o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                o.vertex = UnityObjectToClipPos (v.vertex);
+                o.uv = TRANSFORM_TEX (v.uv, _MainTex);
                 return o;
             }
 
@@ -56,7 +55,7 @@ Shader "Ng/NgUnlit"
             {
                 //UNITY_SETUP_INSTANCE_ID(i);
                 //return tex2D(_MainTex, i.uv) * UNITY_ACCESS_INSTANCED_PROP(Props, _Color);
-                return tex2D(_MainTex, i.uv) * _Color;
+                return tex2D (_MainTex, i.uv) * _Color;
             }
             ENDCG
         }

@@ -104,6 +104,14 @@ namespace ProjectNothing
 
         void DrawRectangles ()
         {
+            List<Vector2> triangle = new () { new Vector2 (1, 2), new Vector2 (1, -2), new Vector2 (0, -1) };
+            Mesh mesh = MeshFactory.CreateTriangle (triangle);
+            if (mesh == null)
+            {
+                return;
+            }
+            //Mesh mesh = MeshFactory.CreateRectangle (Vector2.one);
+
             List<Matrix4x4> rectangles = new ();
             List<Matrix4x4> selects = new ();
 
@@ -118,8 +126,6 @@ namespace ProjectNothing
                     selects.Add (rectangle.ObjectToWorld);
                 }
             }
-
-            Mesh mesh = RectangleMesh.CreateMesh (Vector2.one);
 
             if (rectangles.Count > 0)
             {
@@ -146,7 +152,7 @@ namespace ProjectNothing
                     matProps = ms_SquareMaterialPropertyBlock
                 };
 
-                Graphics.RenderMeshInstanced (rp, mesh, 0, selects);
+                Graphics.RenderMeshInstanced (rp, m_Mesh, 0, selects);
             }
         }
 

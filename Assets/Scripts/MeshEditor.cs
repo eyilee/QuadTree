@@ -26,25 +26,36 @@ namespace ProjectNothing
             m_SelectionSystem.OnRightClick += (Vector2 mousePosition) => Complete ();
         }
 
+        public void Start ()
+        {
+            // for test
+            AddVertex (new Vector2 (0f, 0f));
+            AddVertex (new Vector2 (1f, 1f));
+            AddVertex (new Vector2 (2f, 2f));
+            AddVertex (new Vector2 (0f, 3f));
+            AddVertex (new Vector2 (-2f, 2f));
+            AddVertex (new Vector2 (-1f, 1f));
+        }
+
         public void Update ()
         {
-            ms_VertexMaterialPropertyBlock.SetColor (ms_ColorID, Color.white);
+            int index = 1;
 
-            RenderParams rp = new ()
-            {
-                material = m_VertexMaterial,
-                matProps = ms_VertexMaterialPropertyBlock
-            };
-
-            List<Matrix4x4> objectToWorlds = new ();
             foreach (Vector2 vertex in m_Vertices)
             {
-                objectToWorlds.Add (Matrix4x4.TRS (vertex, Quaternion.identity, Vector2.one * 0.1f));
-            }
+                float factor = Mathf.Lerp (0.5f, 1f, index / (float)m_Vertices.Count);
 
-            if (objectToWorlds.Count > 0)
-            {
-                Graphics.RenderMeshInstanced (rp, m_VertexMesh, 0, objectToWorlds);
+                ms_VertexMaterialPropertyBlock.SetColor (ms_ColorID, Color.white * factor);
+
+                RenderParams rp = new ()
+                {
+                    material = m_VertexMaterial,
+                    matProps = ms_VertexMaterialPropertyBlock
+                };
+
+                Graphics.RenderMesh (rp, m_VertexMesh, 0, Matrix4x4.TRS (vertex, Quaternion.identity, Vector2.one * 0.1f));
+
+                index++;
             }
         }
 
@@ -60,17 +71,14 @@ namespace ProjectNothing
 
         void Complete ()
         {
-            // TODO: Graham scan
-            m_Vertices.Sort ((lhs, rhs) =>
+            if (m_Vertices.Count >= 3)
             {
-                if (lhs.y == rhs.y)
-                {
-                    return lhs.x.CompareTo (rhs.x);
-                }
-                return lhs.y.CompareTo (rhs.y);
-            });
+                List<Vector2> convexHull = NgPhysics2D.GenerateConvexHull (m_Vertices);
+                Mesh mesh = MeshFactory.CreatePolygon (convexHull);
 
-            m_Vertices.Clear ();
+                m_Vertices.Clear ();
+                m_Vertices.AddRange (convexHull);
+            }
         }
     }
 }

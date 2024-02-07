@@ -91,7 +91,10 @@ namespace ProjectNothing
                     break;
                 }
 
-                triangles.AddRange (ReorderIndexes (vertices, (earIndex + indexes.Count - 1) % indexes.Count, earIndex, (earIndex + 1) % indexes.Count));
+                int i0 = indexes[(earIndex - 1 + indexes.Count) % indexes.Count];
+                int i1 = indexes[earIndex];
+                int i2 = indexes[(earIndex + 1) % indexes.Count];
+                triangles.AddRange (ReorderIndexes (vertices, i0, i1, i2));
 
                 indexes.RemoveAt (earIndex);
             }

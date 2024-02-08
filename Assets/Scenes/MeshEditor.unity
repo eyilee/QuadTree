@@ -246,7 +246,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_VertexMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
-  m_VertexMaterial: {fileID: 2100000, guid: 55ac876f8e8cfa540a26c3a46c23c460, type: 2}
+  m_VertexMaterial: {fileID: 2100000, guid: ed42a5a431e9c7543beccd7a77fd8687, type: 2}
 --- !u!4 &898641203
 Transform:
   m_ObjectHideFlags: 0

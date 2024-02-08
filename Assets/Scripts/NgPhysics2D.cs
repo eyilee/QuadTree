@@ -5,6 +5,14 @@ namespace ProjectNothing
 {
     public class NgPhysics2D
     {
+        public static bool Contains (NgTriangle2D triangle, Vector2 point)
+        {
+            bool z1 = Vector3.Cross (triangle[0] - point, triangle[1] - point).z > 0;
+            bool z2 = Vector3.Cross (triangle[1] - point, triangle[2] - point).z > 0;
+            bool z3 = Vector3.Cross (triangle[2] - point, triangle[0] - point).z > 0;
+            return z1 == z2 && z2 == z3;
+        }
+
         public static List<Vector2> GenerateConvexHull (List<Vector2> points)
         {
             if (points == null || points.Count == 0)

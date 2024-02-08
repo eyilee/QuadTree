@@ -39,10 +39,10 @@ namespace ProjectNothing
             // Set vertices
             Vector3[] vertices = new Vector3[]
             {
-                new Vector3 (x, y, 0f),
-                new Vector3 (-x, y, 0f),
-                new Vector3 (-x, -y, 0f),
-                new Vector3 (x, -y, 0f)
+                new (x, y, 0f),
+                new (-x, y, 0f),
+                new (-x, -y, 0f),
+                new (x, -y, 0f)
             };
             mesh.SetVertices (vertices);
 
@@ -61,10 +61,10 @@ namespace ProjectNothing
             // Set uvs
             Vector2[] uvs = new Vector2[]
             {
-                new Vector2 (1f, 1f),
-                new Vector2 (0f, 1f),
-                new Vector2 (0f, 0f),
-                new Vector2 (1f, 0f)
+                new (1f, 1f),
+                new (0f, 1f),
+                new (0f, 0f),
+                new (1f, 0f)
             };
             mesh.SetUVs (0, uvs);
 
@@ -83,7 +83,7 @@ namespace ProjectNothing
             List<int> triangles = new ();
 
             List<int> indexes = Enumerable.Range (0, vertices.Count).ToList ();
-            while (indexes.Count > 0)
+            while (indexes.Count > 2)
             {
                 int earIndex = FindEarIndex (vertices, indexes);
                 if (earIndex == -1)
@@ -99,6 +99,8 @@ namespace ProjectNothing
                 indexes.RemoveAt (earIndex);
             }
 
+            mesh.SetTriangles (triangles, 0);
+
             mesh.RecalculateBounds ();
             mesh.RecalculateNormals ();
             mesh.RecalculateTangents ();
@@ -111,7 +113,34 @@ namespace ProjectNothing
 
             static int FindEarIndex (List<Vector3> vertices, List<int> indexes)
             {
-                // TODO: Ear clipping
+                for (int index = 0; index < indexes.Count; index++)
+                {
+                    int i0 = indexes[(index - 1 + indexes.Count) % indexes.Count];
+                    int i1 = indexes[index];
+                    int i2 = indexes[(index + 1) % indexes.Count];
+                    NgTriangle2D triangle = new (vertices[i0], vertices[i1], vertices[i2]);
+
+                    bool contains = false;
+                    for (int other = 0; other < indexes.Count; other++)
+                    {
+                        if (other == i0 || other == i1 || other == i2)
+                        {
+                            continue;
+                        }
+
+                        if (NgPhysics2D.Contains (triangle, vertices[other]))
+                        {
+                            contains = true;
+                            break;
+                        }
+                    }
+
+                    if (!contains)
+                    {
+                        return indexes[index];
+                    }
+                }
+
                 return -1;
             }
         }
@@ -119,17 +148,13 @@ namespace ProjectNothing
         static int[] ReorderIndexes (List<Vector3> points, int i0, int i1, int i2)
         {
             float z = Vector3.Cross (points[i1] - points[i0], points[i2] - points[i0]).z;
-            if (z < 0f)
+            if (z <= 0f)
             {
                 return new int[] { i0, i1, i2 };
             }
-            else if (z > 0f)
-            {
-                return new int[] { i0, i2, i1 };
-            }
             else
             {
-                return null;
+                return new int[] { i0, i2, i1 };
             }
         }
 

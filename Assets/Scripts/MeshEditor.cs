@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace ProjectNothing
 {
@@ -16,6 +17,7 @@ namespace ProjectNothing
         readonly List<Vector2> m_Vertices = new ();
 
         SelectionSystem m_SelectionSystem;
+        Mesh m_NewMesh;
 
         public void Awake ()
         {
@@ -57,6 +59,17 @@ namespace ProjectNothing
 
                 index++;
             }
+
+            if (m_NewMesh != null)
+            {
+                RenderParams rp = new ()
+                {
+                    material = m_VertexMaterial,
+                    matProps = ms_VertexMaterialPropertyBlock
+                };
+
+                Graphics.RenderMesh (rp, m_NewMesh, 0, Matrix4x4.TRS (Vector3.zero, Quaternion.identity, Vector3.one));
+            }
         }
 
         void AddVertex (Vector2 mousePosition)
@@ -74,7 +87,7 @@ namespace ProjectNothing
             if (m_Vertices.Count >= 3)
             {
                 List<Vector2> convexHull = NgPhysics2D.GenerateConvexHull (m_Vertices);
-                Mesh mesh = MeshFactory.CreatePolygon (convexHull);
+                m_NewMesh = MeshFactory.CreatePolygon (convexHull);
 
                 m_Vertices.Clear ();
                 m_Vertices.AddRange (convexHull);

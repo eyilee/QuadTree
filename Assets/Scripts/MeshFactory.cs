@@ -83,7 +83,7 @@ namespace ProjectNothing
             List<int> triangles = new ();
 
             List<int> indexes = Enumerable.Range (0, vertices.Count).ToList ();
-            while (indexes.Count > 2)
+            while (indexes.Count > 3)
             {
                 int earIndex = FindEarIndex (vertices, indexes);
                 if (earIndex == -1)
@@ -98,6 +98,8 @@ namespace ProjectNothing
 
                 indexes.RemoveAt (earIndex);
             }
+
+            triangles.AddRange (ReorderIndexes (vertices, indexes[0], indexes[1], indexes[2]));
 
             mesh.SetTriangles (triangles, 0);
 
@@ -118,17 +120,26 @@ namespace ProjectNothing
                     int i0 = indexes[(index - 1 + indexes.Count) % indexes.Count];
                     int i1 = indexes[index];
                     int i2 = indexes[(index + 1) % indexes.Count];
+
+                    // Vertices must be ordered by clock-wise
+                    float z = Vector3.Cross (vertices[i1] - vertices[i0], vertices[i2] - vertices[i1]).z;
+                    if (z <= 0)
+                    {
+                        continue;
+                    }
+
                     NgTriangle2D triangle = new (vertices[i0], vertices[i1], vertices[i2]);
 
                     bool contains = false;
                     for (int other = 0; other < indexes.Count; other++)
                     {
-                        if (other == i0 || other == i1 || other == i2)
+                        int io = indexes[other];
+                        if (io == i0 || io == i1 || io == i2)
                         {
                             continue;
                         }
 
-                        if (NgPhysics2D.Contains (triangle, vertices[other]))
+                        if (NgPhysics2D.Contains (triangle, vertices[io]))
                         {
                             contains = true;
                             break;
@@ -137,7 +148,7 @@ namespace ProjectNothing
 
                     if (!contains)
                     {
-                        return indexes[index];
+                        return index;
                     }
                 }
 

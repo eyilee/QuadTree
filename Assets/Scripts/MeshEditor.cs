@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace ProjectNothing
 {
@@ -10,6 +9,8 @@ namespace ProjectNothing
         Mesh m_VertexMesh;
         [SerializeField]
         Material m_VertexMaterial;
+        [SerializeField]
+        bool m_IsConvexHull;
 
         static readonly int ms_ColorID = Shader.PropertyToID ("_Color");
         static MaterialPropertyBlock ms_VertexMaterialPropertyBlock = null;
@@ -75,23 +76,18 @@ namespace ProjectNothing
         void AddVertex (Vector2 mousePosition)
         {
             m_Vertices.Add (mousePosition);
-
-            if (m_Vertices.Count >= 8)
-            {
-                Complete ();
-            }
         }
 
         void Complete ()
         {
             if (m_Vertices.Count >= 3)
             {
-                List<Vector2> convexHull = NgPhysics2D.GenerateConvexHull (m_Vertices);
-                m_NewMesh = MeshFactory.CreatePolygon (convexHull);
-
-                m_Vertices.Clear ();
-                m_Vertices.AddRange (convexHull);
+                m_NewMesh = m_IsConvexHull
+                    ? MeshFactory.CreatePolygon (NgPhysics2D.GenerateConvexHull (m_Vertices))
+                    : MeshFactory.CreatePolygon (m_Vertices);
             }
+
+            m_Vertices.Clear ();
         }
     }
 }

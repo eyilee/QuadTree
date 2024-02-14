@@ -39,16 +39,11 @@ namespace ProjectNothing
             m_Collider.SetRectangle (position, scale, roration);
         }
 
-        public void OnCollision (List<NgCollider2D> colliders)
+        public void OnCollision (NgCollision2D collision)
         {
-            m_IsSelected = false;
-
-            foreach (NgCollider2D collider in colliders)
+            if (collision.LayerMask == NgLayerMask.Selection)
             {
-                if (collider.LayerMask == NgLayerMask.Selection)
-                {
-                    m_IsSelected = true;
-                }
+                m_IsSelected = true;
             }
         }
 

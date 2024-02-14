@@ -7,21 +7,21 @@ namespace ProjectNothing
     {
         int m_Depth;
         int m_Capacity;
-        NgBoundingBox2D m_Bound;
+        NgBoundingBox2D m_BoundingBox;
 
         readonly List<NgCollider2D> m_Colliders = new ();
         readonly List<NgQuadTree2D> m_QuadTrees = new ();
         readonly Queue<NgQuadTree2D> m_Queue = new ();
 
-        public NgBoundingBox2D Bound => m_Bound;
-        public Matrix4x4 ObjectToWorld => Matrix4x4.TRS (m_Bound.Center, Quaternion.identity, m_Bound.Size);
+        public NgBoundingBox2D BoundingBox => m_BoundingBox;
+        public Matrix4x4 ObjectToWorld => Matrix4x4.TRS (m_BoundingBox.Center, Quaternion.identity, m_BoundingBox.Size);
         public List<NgQuadTree2D> QuadTrees => m_QuadTrees;
 
         public NgQuadTree2D (int depth, int capacity, NgBoundingBox2D bound, Queue<NgQuadTree2D> queue = null)
         {
             m_Depth = depth;
             m_Capacity = capacity;
-            m_Bound = bound;
+            m_BoundingBox = bound;
             m_Queue = queue ?? new Queue<NgQuadTree2D> ();
         }
 
@@ -44,7 +44,7 @@ namespace ProjectNothing
             {
                 quadTree.m_Depth = depth;
                 quadTree.m_Capacity = capacity;
-                quadTree.m_Bound = bound;
+                quadTree.m_BoundingBox = bound;
                 return quadTree;
             }
 
@@ -53,7 +53,7 @@ namespace ProjectNothing
 
         public bool TryInsert (NgCollider2D collider)
         {
-            if (!m_Bound.Contains (collider.BoundingBox))
+            if (!m_BoundingBox.Contains (collider.BoundingBox))
             {
                 return false;
             }
@@ -88,19 +88,19 @@ namespace ProjectNothing
 
         void SubDivide ()
         {
-            Vector2 extents = m_Bound.Extents * 0.5f;
-            Vector2 size = m_Bound.Size * 0.5f;
+            Vector2 extents = m_BoundingBox.Extents * 0.5f;
+            Vector2 size = m_BoundingBox.Size * 0.5f;
 
             m_QuadTrees.Capacity = m_Capacity;
-            m_QuadTrees.Add (Create (m_Depth - 1, m_Capacity, new NgBoundingBox2D (m_Bound.Center + new Vector2 (extents.x, extents.y), size)));
-            m_QuadTrees.Add (Create (m_Depth - 1, m_Capacity, new NgBoundingBox2D (m_Bound.Center + new Vector2 (-extents.x, extents.y), size)));
-            m_QuadTrees.Add (Create (m_Depth - 1, m_Capacity, new NgBoundingBox2D (m_Bound.Center + new Vector2 (-extents.x, -extents.y), size)));
-            m_QuadTrees.Add (Create (m_Depth - 1, m_Capacity, new NgBoundingBox2D (m_Bound.Center + new Vector2 (extents.x, -extents.y), size)));
+            m_QuadTrees.Add (Create (m_Depth - 1, m_Capacity, new NgBoundingBox2D (m_BoundingBox.Center + new Vector2 (extents.x, extents.y), size)));
+            m_QuadTrees.Add (Create (m_Depth - 1, m_Capacity, new NgBoundingBox2D (m_BoundingBox.Center + new Vector2 (-extents.x, extents.y), size)));
+            m_QuadTrees.Add (Create (m_Depth - 1, m_Capacity, new NgBoundingBox2D (m_BoundingBox.Center + new Vector2 (-extents.x, -extents.y), size)));
+            m_QuadTrees.Add (Create (m_Depth - 1, m_Capacity, new NgBoundingBox2D (m_BoundingBox.Center + new Vector2 (extents.x, -extents.y), size)));
         }
 
         public void Query (NgCollider2D target, List<NgCollider2D> colliders)
         {
-            if (target.BoundingBox.Intersects (m_Bound))
+            if (target.BoundingBox.Intersects (m_BoundingBox))
             {
                 foreach (NgCollider2D collider in m_Colliders)
                 {

@@ -4,6 +4,8 @@ namespace ProjectNothing
 {
     public class NgSelection : NgGameObject
     {
+        readonly SpriteRenderer m_SpriteRenderer = null;
+
         readonly NgCollider2D m_Collider = null;
         Vector2 m_BeginPosition;
         Vector2 m_EndPosition;
@@ -11,12 +13,13 @@ namespace ProjectNothing
         public NgCollider2D Collider => m_Collider;
         public Matrix4x4 ObjectToWorld => Matrix4x4.TRS (Transform.Position, Quaternion.AngleAxis (Transform.Rotation, Vector3.forward), Transform.Scale);
 
-        bool m_IsActive = false;
+        public bool IsActive => m_SpriteRenderer.enabled;
 
-        public bool IsActive => m_IsActive;
-
-        public NgSelection ()
+        public NgSelection (GameObject gameObject)
         {
+            m_SpriteRenderer = gameObject.GetComponent<SpriteRenderer> ();
+            m_SpriteRenderer.color = Color.green;
+
             m_Collider = AddComponent<NgCollider2D> ();
             m_Collider.LayerMask = NgLayerMask.Selection;
         }
@@ -26,7 +29,10 @@ namespace ProjectNothing
             m_BeginPosition = position;
             m_EndPosition = position;
 
-            m_IsActive = true;
+            if (!m_SpriteRenderer.enabled)
+            {
+                m_SpriteRenderer.enabled = true;
+            }
 
             Update ();
         }
@@ -40,12 +46,15 @@ namespace ProjectNothing
 
         public void OnEndDrag ()
         {
-            m_IsActive = false;
+            if (m_SpriteRenderer.enabled)
+            {
+                m_SpriteRenderer.enabled = false;
+            }
         }
 
         public void Update ()
         {
-            if (!m_IsActive)
+            if (!m_SpriteRenderer.enabled)
             {
                 return;
             }
@@ -54,6 +63,9 @@ namespace ProjectNothing
 
             Vector2 diff = m_EndPosition - m_BeginPosition;
             Transform.Scale = new Vector2 (Mathf.Abs (diff.x), Mathf.Abs (diff.y));
+
+            m_SpriteRenderer.transform.position = Transform.Position;
+            m_SpriteRenderer.size = Transform.Scale;
 
             m_Collider.SetRectangle (Transform.Position, Transform.Scale, Transform.Rotation);
         }

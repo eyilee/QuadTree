@@ -5,10 +5,13 @@ namespace ProjectNothing
 {
     public enum NgPhysicsShapeType2D
     {
+        Point,
         Circle,
+        Line,
         Capsule,
-        Polygon,
-        Edges
+        Triangle,
+        Rectangle,
+        Polygon
     }
 
     public class NgPhysicsShape2D

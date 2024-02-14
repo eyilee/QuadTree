@@ -29,17 +29,6 @@ namespace ProjectNothing
             m_SelectionSystem.OnRightClick += (Vector2 mousePosition) => Complete ();
         }
 
-        public void Start ()
-        {
-            // for test
-            AddVertex (new Vector2 (0f, 0f));
-            AddVertex (new Vector2 (1f, 1f));
-            AddVertex (new Vector2 (2f, 2f));
-            AddVertex (new Vector2 (0f, 3f));
-            AddVertex (new Vector2 (-2f, 2f));
-            AddVertex (new Vector2 (-1f, 1f));
-        }
-
         public void Update ()
         {
             int index = 1;

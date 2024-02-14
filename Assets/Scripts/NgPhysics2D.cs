@@ -3,6 +3,109 @@ using UnityEngine;
 
 namespace ProjectNothing
 {
+    public class NgLine2D
+    {
+        readonly Vector2[] m_Vertices = new Vector2[2];
+
+        public Vector2 this[int index]
+        {
+            get { return m_Vertices[index]; }
+            set { m_Vertices[index] = value; }
+        }
+
+        public Vector2 Start => m_Vertices[0];
+        public Vector2 End => m_Vertices[1];
+        public Vector2 Vector => m_Vertices[1] - m_Vertices[0];
+
+        public NgLine2D ()
+        {
+            m_Vertices[0] = Vector2.zero;
+            m_Vertices[1] = Vector2.one;
+        }
+
+        public NgLine2D (Vector2 v1, Vector2 v2)
+        {
+            m_Vertices[0] = v1;
+            m_Vertices[1] = v2;
+        }
+    }
+
+    public class NgCircle2D
+    {
+        Vector2 m_Center;
+        float m_Radius;
+
+        public Vector2 Center
+        {
+            get => m_Center;
+            set => m_Center = value;
+        }
+
+        public float Radius
+        {
+            get => m_Radius;
+            set => m_Radius = value;
+        }
+
+        public NgCircle2D (Vector2 center, float radius)
+        {
+            m_Center = center;
+            m_Radius = radius;
+        }
+    }
+
+    public class NgCapsule2D
+    {
+        readonly Vector2[] m_Vertices = new Vector2[2];
+        float m_Radius;
+
+        public Vector2 this[int index]
+        {
+            get { return m_Vertices[index]; }
+            set { m_Vertices[index] = value; }
+        }
+
+        public Vector2 Start => m_Vertices[0];
+        public Vector2 End => m_Vertices[1];
+        public Vector2 Vector => m_Vertices[1] - m_Vertices[0];
+
+        public float Radius
+        {
+            get => m_Radius;
+            set => m_Radius = value;
+        }
+
+        public NgCapsule2D (Vector2 v1, Vector2 v2, float radius)
+        {
+            m_Vertices[0] = v1;
+            m_Vertices[1] = v2;
+            m_Radius = radius;
+        }
+    }
+
+    public class NgTriangle2D
+    {
+        readonly Vector2[] m_Vertices = new Vector2[3];
+
+        public Vector2 this[int index]
+        {
+            get { return m_Vertices[index]; }
+            set { m_Vertices[index] = value; }
+        }
+
+        public NgLine2D Line (int index)
+        {
+            return new NgLine2D (m_Vertices[index % 3], m_Vertices[(index + 1) % 3]);
+        }
+
+        public NgTriangle2D (Vector2 v1, Vector2 v2, Vector2 v3)
+        {
+            m_Vertices[0] = v1;
+            m_Vertices[1] = v2;
+            m_Vertices[2] = v3;
+        }
+    }
+
     public class NgPhysics2D
     {
         /*  Shapes

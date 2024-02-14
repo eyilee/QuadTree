@@ -50,5 +50,9 @@ namespace ProjectNothing
 
             m_BoundingBox = new NgBoundingBox2D (center, new Vector2 (x, y));
         }
+
+        public void GetCollisions (List<NgCollider2D> colliders, List<NgCollision2D> collisions)
+        {
+        }
     }
 }

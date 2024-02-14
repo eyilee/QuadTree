@@ -6,11 +6,9 @@ namespace ProjectNothing
     public class Game : MonoBehaviour
     {
         [SerializeField]
-        Mesh m_Mesh;
+        Material m_UnlitMaterial;
         [SerializeField]
-        Material m_OutlineMaterial;
-        [SerializeField]
-        Material m_SquareMaterial;
+        GameObject m_SelectionPrefab;
 
         [SerializeField]
         float m_BoardWidth;
@@ -23,27 +21,25 @@ namespace ProjectNothing
         float m_RectangleHeight;
 
         static readonly int ms_ColorID = Shader.PropertyToID ("_Color");
-        static readonly int ms_BoxID = Shader.PropertyToID ("_Box");
-        static MaterialPropertyBlock ms_OutlineMaterialPropertyBlock = null;
-        static MaterialPropertyBlock ms_SquareMaterialPropertyBlock = null;
+        static MaterialPropertyBlock ms_UnlitMaterialPropertyBlock = null;
 
         NgQuadTree2D m_Root = null;
-        NgSelection m_Selection = null;
+
+        Mesh m_Mesh;
         readonly List<NgRectangle> m_Rectangles = new ();
 
+        NgSelection m_Selection = null;
         SelectionSystem m_SelectionSystem;
 
         public void Awake ()
         {
-            ms_OutlineMaterialPropertyBlock = new MaterialPropertyBlock ();
-            ms_OutlineMaterialPropertyBlock.SetColor (ms_ColorID, Color.green);
-
-            ms_SquareMaterialPropertyBlock = new MaterialPropertyBlock ();
+            ms_UnlitMaterialPropertyBlock = new MaterialPropertyBlock ();
 
             m_Root = new (5, 4, new NgBoundingBox2D (Vector2.zero, new Vector2 (m_BoardWidth, m_BoardHeight)));
 
-            m_Selection = new NgSelection ();
+            m_Mesh = MeshFactory.CreateRectangle (Vector2.one);
 
+            m_Selection = new NgSelection (Instantiate (m_SelectionPrefab, Vector3.zero, Quaternion.identity, transform));
             m_SelectionSystem = gameObject.GetComponent<SelectionSystem> ();
             m_SelectionSystem.OnLeftClick += (Vector2 mousePosition) => AddRectangle (mousePosition);
             m_SelectionSystem.OnLeftBeginDrag += (Vector2 mousePosition) => m_Selection.OnBeginDrag (mousePosition);
@@ -70,48 +66,29 @@ namespace ProjectNothing
             }
 
             List<NgCollider2D> colliders = new ();
+            List<NgCollision2D> collisions = new ();
             foreach (NgRectangle rectangle in m_Rectangles)
             {
                 colliders.Clear ();
+                collisions.Clear ();
 
+                // Broad phase
                 m_Root.Query (rectangle.Collider, colliders);
 
-                rectangle.OnCollision (colliders);
+                // Narrow phase
+                rectangle.Collider.GetCollisions (colliders, collisions);
+
+                foreach (NgCollision2D collision in collisions)
+                {
+                    rectangle.OnCollision (collision);
+                }
             }
 
-            DrawSelection ();
             DrawRectangles ();
-        }
-
-        void DrawSelection ()
-        {
-            if (!m_Selection.IsActive)
-            {
-                return;
-            }
-
-            ms_OutlineMaterialPropertyBlock.SetVector (ms_BoxID, new Vector4 (m_Selection.Transform.Position.x, m_Selection.Transform.Position.y, m_Selection.Transform.Scale.x, m_Selection.Transform.Scale.y));
-
-            RenderParams rp = new ()
-            {
-                worldBounds = new Bounds (Vector3.zero, new Vector3 (m_BoardWidth, m_BoardHeight, 0f)),
-                material = m_OutlineMaterial,
-                matProps = ms_OutlineMaterialPropertyBlock
-            };
-
-            Graphics.RenderMesh (rp, m_Mesh, 0, m_Selection.ObjectToWorld);
         }
 
         void DrawRectangles ()
         {
-            List<Vector2> triangle = new () { new Vector2 (1, 2), new Vector2 (1, -2), new Vector2 (0, -1) };
-            Mesh mesh = MeshFactory.CreateTriangle (triangle);
-            if (mesh == null)
-            {
-                return;
-            }
-            //Mesh mesh = MeshFactory.CreateRectangle (Vector2.one);
-
             List<Matrix4x4> rectangles = new ();
             List<Matrix4x4> selects = new ();
 
@@ -129,27 +106,27 @@ namespace ProjectNothing
 
             if (rectangles.Count > 0)
             {
-                ms_SquareMaterialPropertyBlock.SetColor (ms_ColorID, Color.white);
+                ms_UnlitMaterialPropertyBlock.SetColor (ms_ColorID, Color.white);
 
                 RenderParams rp = new ()
                 {
                     worldBounds = new Bounds (Vector3.zero, new Vector3 (m_BoardWidth, m_BoardHeight, 0f)),
-                    material = m_SquareMaterial,
-                    matProps = ms_SquareMaterialPropertyBlock
+                    material = m_UnlitMaterial,
+                    matProps = ms_UnlitMaterialPropertyBlock
                 };
 
-                Graphics.RenderMeshInstanced (rp, mesh, 0, rectangles);
+                Graphics.RenderMeshInstanced (rp, m_Mesh, 0, rectangles);
             }
 
             if (selects.Count > 0)
             {
-                ms_SquareMaterialPropertyBlock.SetColor (ms_ColorID, Color.red);
+                ms_UnlitMaterialPropertyBlock.SetColor (ms_ColorID, Color.red);
 
                 RenderParams rp = new ()
                 {
                     worldBounds = new Bounds (Vector3.zero, new Vector3 (m_BoardWidth, m_BoardHeight, 0f)),
-                    material = m_SquareMaterial,
-                    matProps = ms_SquareMaterialPropertyBlock
+                    material = m_UnlitMaterial,
+                    matProps = ms_UnlitMaterialPropertyBlock
                 };
 
                 Graphics.RenderMeshInstanced (rp, m_Mesh, 0, selects);
@@ -194,7 +171,7 @@ namespace ProjectNothing
                     queue.Enqueue (subQuadTree);
                 }
 
-                Gizmos.DrawWireCube (quadTree.Bound.Center, quadTree.Bound.Size);
+                Gizmos.DrawWireCube (quadTree.BoundingBox.Center, quadTree.BoundingBox.Size);
             }
 
             Gizmos.color = Color.green;

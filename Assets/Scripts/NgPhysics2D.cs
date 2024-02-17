@@ -92,11 +92,24 @@ namespace ProjectNothing
          */
 
         /*
+         *  Common
+         */
+        public static bool Overlaps<T1, T2> (T1 lhs, T2 rhs)
+        {
+            return Overlaps (lhs, rhs);
+        }
+
+        /*
          *  Point
          */
         public static bool Overlaps (Vector2 lhs, Vector2 rhs)
         {
             return (lhs.x - rhs.x) < float.Epsilon && (lhs.y - rhs.y) < float.Epsilon;
+        }
+
+        public static bool Overlaps (Vector2 point, NgCircle2D circle)
+        {
+            return Contains (circle, point);
         }
 
         /*

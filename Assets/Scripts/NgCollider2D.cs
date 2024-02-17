@@ -56,13 +56,10 @@ namespace ProjectNothing
             switch (m_PhysicsShape2D.ShapeType)
             {
                 case NgPhysicsShapeType2D.Point:
+                    GetPointCollisions (colliders, collisions);
                     break;
                 case NgPhysicsShapeType2D.Circle:
-                    NgCircle2D circle = new (m_PhysicsShape2D.Vertices[0], m_PhysicsShape2D.Radius);
-                    foreach (NgCollider2D collider in colliders)
-                    {
-                        GetCollision (circle, collider, collisions);
-                    }
+                    GetCircleCollisions (colliders, collisions);
                     break;
                 case NgPhysicsShapeType2D.Line:
                     break;
@@ -79,61 +76,71 @@ namespace ProjectNothing
             }
         }
 
-        public void GetCollision (Vector2 point, NgCollider2D collider, List<NgCollision2D> collisions)
+        void GetPointCollisions (List<NgCollider2D> colliders, List<NgCollision2D> collisions)
         {
-            switch (collider.m_PhysicsShape2D.ShapeType)
+            Vector2 point = m_PhysicsShape2D.Vertices[0];
+
+            colliders.ForEach (collider =>
             {
-                case NgPhysicsShapeType2D.Point:
-                    if (NgPhysics2D.Overlaps (point, collider.m_PhysicsShape2D.Vertices[0]))
-                    {
-                        collisions.Add (new NgCollision2D ());
-                    }
-                    break;
-                case NgPhysicsShapeType2D.Circle:
-                    break;
-                case NgPhysicsShapeType2D.Line:
-                    break;
-                case NgPhysicsShapeType2D.Capsule:
-                    break;
-                case NgPhysicsShapeType2D.Triangle:
-                    break;
-                case NgPhysicsShapeType2D.Rectangle:
-                    break;
-                case NgPhysicsShapeType2D.Polygon:
-                    break;
-                default:
-                    break;
-            }
+                switch (collider.m_PhysicsShape2D.ShapeType)
+                {
+                    case NgPhysicsShapeType2D.Point:
+                        GetCollision (point, collider.m_PhysicsShape2D.Vertices[0], collisions);
+                        break;
+                    case NgPhysicsShapeType2D.Circle:
+                        GetCollision (point, new NgCircle2D (collider.m_PhysicsShape2D.Vertices[0], collider.m_PhysicsShape2D.Radius), collisions);
+                        break;
+                    case NgPhysicsShapeType2D.Line:
+                        break;
+                    case NgPhysicsShapeType2D.Capsule:
+                        break;
+                    case NgPhysicsShapeType2D.Triangle:
+                        break;
+                    case NgPhysicsShapeType2D.Rectangle:
+                        break;
+                    case NgPhysicsShapeType2D.Polygon:
+                        break;
+                    default:
+                        break;
+                }
+            });
         }
 
-        public void GetCollision (NgCircle2D circle, NgCollider2D collider, List<NgCollision2D> collisions)
+        void GetCircleCollisions (List<NgCollider2D> colliders, List<NgCollision2D> collisions)
         {
-            switch (collider.m_PhysicsShape2D.ShapeType)
+            NgCircle2D circle = new (m_PhysicsShape2D.Vertices[0], m_PhysicsShape2D.Radius);
+
+            colliders.ForEach (collider =>
             {
-                case NgPhysicsShapeType2D.Point:
-                    if (NgPhysics2D.Overlaps (circle, collider.m_PhysicsShape2D.Vertices[0]))
-                    {
-                        collisions.Add (new NgCollision2D ());
-                    }
-                    break;
-                case NgPhysicsShapeType2D.Circle:
-                    if (NgPhysics2D.Overlaps (circle, new NgCircle2D (collider.m_PhysicsShape2D.Vertices[0], collider.m_PhysicsShape2D.Radius)))
-                    {
-                        collisions.Add (new NgCollision2D ());
-                    }
-                    break;
-                case NgPhysicsShapeType2D.Line:
-                    break;
-                case NgPhysicsShapeType2D.Capsule:
-                    break;
-                case NgPhysicsShapeType2D.Triangle:
-                    break;
-                case NgPhysicsShapeType2D.Rectangle:
-                    break;
-                case NgPhysicsShapeType2D.Polygon:
-                    break;
-                default:
-                    break;
+                switch (collider.m_PhysicsShape2D.ShapeType)
+                {
+                    case NgPhysicsShapeType2D.Point:
+                        GetCollision (circle, collider.m_PhysicsShape2D.Vertices[0], collisions);
+                        break;
+                    case NgPhysicsShapeType2D.Circle:
+                        GetCollision (circle, new NgCircle2D (collider.m_PhysicsShape2D.Vertices[0], collider.m_PhysicsShape2D.Radius), collisions);
+                        break;
+                    case NgPhysicsShapeType2D.Line:
+                        break;
+                    case NgPhysicsShapeType2D.Capsule:
+                        break;
+                    case NgPhysicsShapeType2D.Triangle:
+                        break;
+                    case NgPhysicsShapeType2D.Rectangle:
+                        break;
+                    case NgPhysicsShapeType2D.Polygon:
+                        break;
+                    default:
+                        break;
+                }
+            });
+        }
+
+        void GetCollision<T1, T2> (T1 lhs, T2 rhs, List<NgCollision2D> collisions)
+        {
+            if (NgPhysics2D.Overlaps (lhs, rhs))
+            {
+                collisions.Add (new NgCollision2D ());
             }
         }
     }

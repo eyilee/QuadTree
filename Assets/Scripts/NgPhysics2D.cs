@@ -3,49 +3,28 @@ using UnityEngine;
 
 namespace ProjectNothing
 {
-    public class NgLine2D
+    public readonly struct NgLine2D
     {
-        readonly Vector2[] m_Vertices = new Vector2[2];
+        readonly Vector2[] m_Vertices;
 
-        public Vector2 this[int index]
-        {
-            get { return m_Vertices[index]; }
-            set { m_Vertices[index] = value; }
-        }
-
-        public Vector2 Start => m_Vertices[0];
-        public Vector2 End => m_Vertices[1];
-        public Vector2 Vector => m_Vertices[1] - m_Vertices[0];
-
-        public NgLine2D ()
-        {
-            m_Vertices[0] = Vector2.zero;
-            m_Vertices[1] = Vector2.one;
-        }
+        public readonly Vector2 this[int index] => m_Vertices[index];
+        public readonly Vector2 Start => m_Vertices[0];
+        public readonly Vector2 End => m_Vertices[1];
+        public readonly Vector2 Vector => m_Vertices[1] - m_Vertices[0];
 
         public NgLine2D (Vector2 v1, Vector2 v2)
         {
-            m_Vertices[0] = v1;
-            m_Vertices[1] = v2;
+            m_Vertices = new Vector2[2] { v1, v2 };
         }
     }
 
-    public class NgCircle2D
+    public readonly struct NgCircle2D
     {
-        Vector2 m_Center;
-        float m_Radius;
+        readonly Vector2 m_Center;
+        readonly float m_Radius;
 
-        public Vector2 Center
-        {
-            get => m_Center;
-            set => m_Center = value;
-        }
-
-        public float Radius
-        {
-            get => m_Radius;
-            set => m_Radius = value;
-        }
+        public readonly Vector2 Center => m_Center;
+        public readonly float Radius => m_Radius;
 
         public NgCircle2D (Vector2 center, float radius)
         {
@@ -54,55 +33,38 @@ namespace ProjectNothing
         }
     }
 
-    public class NgCapsule2D
+    public readonly struct NgCapsule2D
     {
-        readonly Vector2[] m_Vertices = new Vector2[2];
-        float m_Radius;
+        readonly Vector2[] m_Vertices;
+        readonly float m_Radius;
 
-        public Vector2 this[int index]
-        {
-            get { return m_Vertices[index]; }
-            set { m_Vertices[index] = value; }
-        }
-
-        public Vector2 Start => m_Vertices[0];
-        public Vector2 End => m_Vertices[1];
-        public Vector2 Vector => m_Vertices[1] - m_Vertices[0];
-
-        public float Radius
-        {
-            get => m_Radius;
-            set => m_Radius = value;
-        }
+        public readonly Vector2 this[int index] => m_Vertices[index];
+        public readonly Vector2 Start => m_Vertices[0];
+        public readonly Vector2 End => m_Vertices[1];
+        public readonly Vector2 Vector => m_Vertices[1] - m_Vertices[0];
+        public readonly float Radius => m_Radius;
 
         public NgCapsule2D (Vector2 v1, Vector2 v2, float radius)
         {
-            m_Vertices[0] = v1;
-            m_Vertices[1] = v2;
+            m_Vertices = new Vector2[2] { v1, v2 };
             m_Radius = radius;
         }
     }
 
-    public class NgTriangle2D
+    public readonly struct NgTriangle2D
     {
-        readonly Vector2[] m_Vertices = new Vector2[3];
+        readonly Vector2[] m_Vertices;
 
-        public Vector2 this[int index]
-        {
-            get { return m_Vertices[index]; }
-            set { m_Vertices[index] = value; }
-        }
+        public readonly Vector2 this[int index] => m_Vertices[index];
 
-        public NgLine2D Line (int index)
+        public readonly NgLine2D Line (int index)
         {
             return new NgLine2D (m_Vertices[index % 3], m_Vertices[(index + 1) % 3]);
         }
 
         public NgTriangle2D (Vector2 v1, Vector2 v2, Vector2 v3)
         {
-            m_Vertices[0] = v1;
-            m_Vertices[1] = v2;
-            m_Vertices[2] = v3;
+            m_Vertices = new Vector2[3] { v1, v2, v3 };
         }
     }
 
@@ -130,6 +92,14 @@ namespace ProjectNothing
          */
 
         /*
+         *  Point
+         */
+        public static bool Overlaps (Vector2 lhs, Vector2 rhs)
+        {
+            return (lhs.x - rhs.x) < float.Epsilon && (lhs.y - rhs.y) < float.Epsilon;
+        }
+
+        /*
          *  Circle
          */
         public static Vector2 Closest (NgCircle2D circle, Vector2 point)
@@ -146,6 +116,11 @@ namespace ProjectNothing
         public static bool Overlaps (NgCircle2D circle, Vector2 point)
         {
             return Contains (circle, point);
+        }
+
+        public static bool Overlaps (NgCircle2D lhs, NgCircle2D rhs)
+        {
+            return (lhs.Center - rhs.Center).magnitude <= lhs.Radius + rhs.Radius;
         }
 
         public static List<Vector2> Intersects (NgCircle2D circle, Vector2 point)

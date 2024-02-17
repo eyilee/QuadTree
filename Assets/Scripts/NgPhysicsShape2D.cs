@@ -56,7 +56,7 @@ namespace ProjectNothing
             m_Radius = 0f;
         }
 
-        public void SetRectangle (Vector2 center, Vector2 size, float angle, float radius = 0f)
+        public void SetRectangle (Vector2 center, Vector2 size, float angle)
         {
             m_ShapeType = NgPhysicsShapeType2D.Polygon;
 
@@ -75,7 +75,7 @@ namespace ProjectNothing
             m_Vertices.Add (center - v1);
             m_Vertices.Add (center + v2);
 
-            m_Radius = radius;
+            m_Radius = 0f;
         }
     }
 }

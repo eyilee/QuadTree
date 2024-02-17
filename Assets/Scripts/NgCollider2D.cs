@@ -136,7 +136,31 @@ namespace ProjectNothing
             });
         }
 
-        void GetCollision<T1, T2> (T1 lhs, T2 rhs, List<NgCollision2D> collisions)
+        void GetCollision (Vector2 lhs, Vector2 rhs, List<NgCollision2D> collisions)
+        {
+            if (NgPhysics2D.Overlaps (lhs, rhs))
+            {
+                collisions.Add (new NgCollision2D ());
+            }
+        }
+
+        void GetCollision (Vector2 point, NgCircle2D circle, List<NgCollision2D> collisions)
+        {
+            if (NgPhysics2D.Overlaps (point, circle))
+            {
+                collisions.Add (new NgCollision2D ());
+            }
+        }
+
+        void GetCollision (NgCircle2D circle, Vector2 point, List<NgCollision2D> collisions)
+        {
+            if (NgPhysics2D.Overlaps (circle, point))
+            {
+                collisions.Add (new NgCollision2D ());
+            }
+        }
+
+        void GetCollision (NgCircle2D lhs, NgCircle2D rhs, List<NgCollision2D> collisions)
         {
             if (NgPhysics2D.Overlaps (lhs, rhs))
             {
